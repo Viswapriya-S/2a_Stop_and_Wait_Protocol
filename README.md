@@ -57,9 +57,13 @@ while True:
     c.send("ACK received".encode())
 c.close()
 ```
+
 ##OUTPUT
+
 Client.py
 <img width="799" height="334" alt="Screenshot 2026-02-02 205243" src="https://github.com/user-attachments/assets/36b35084-098b-4466-aa06-59d653b5486f" />
+
+
 Server.py
 <img width="816" height="325" alt="Screenshot 2026-02-02 205402" src="https://github.com/user-attachments/assets/9cb066df-ceb0-4434-ac3a-711eea4e2d7b" />
 
