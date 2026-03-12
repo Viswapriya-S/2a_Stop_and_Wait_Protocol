@@ -23,49 +23,56 @@ Finally, the connection between sender and receiver is terminated.
 CLIENT
 ```
 import socket
-
-# create socket
-s = socket.socket()
-
-# connect to server
-s.connect(('localhost', 8000))
-
+import time
+client = socket.socket()
+client.connect(('localhost', 8000))
+client.settimeout(5)  
 while True:
-    msg = input("Enter data: ")
-    s.send(msg.encode())
-    ack = s.recv(1024).decode()
-    print("Server:", ack)
+    msg = input("Enter a message (or type 'exit' to quit): ")
+    client.send(msg.encode())  
+    if msg.lower() == 'exit':  
+        print("Connection closed by client")
+        client.close()
+        break
+    try:
+        ack = client.recv(1024).decode()
+        if ack == "ACK":
+            print(f"Server acknowledged: {ack}")
+    except socket.timeout:
+        print("No ACK received, retransmitting...")
+        continue
 ```
 SERVER
 ```
 import socket
-# create socket
-s = socket.socket()
-# bind IP and port
-s.bind(('localhost', 8000))
-# listen for client
-s.listen(1)
-print("Server waiting for connection...")
-# accept client
-c, addr = s.accept()
-print("Connected from", addr)
+server = socket.socket()
+server.bind(('localhost', 8000))
+server.listen(1)
+print("Server is listening...")
+conn, addr = server.accept()
+print(f"Connected with {addr}")
 while True:
-    data = c.recv(1024).decode()
-    if not data:
-        break
-    print("Client:", data)
-    c.send("ACK received".encode())
-c.close()
+    data = conn.recv(1024).decode()
+
+    if data:
+        print(f"Received: {data}")
+        conn.send("ACK".encode())
+
+        if data.lower() == 'exit':  
+            print("stop and wait protocol implemented successfully")
+            conn.close()
+            break
 ```
 
 ##OUTPUT
 
 Client.py
-<img width="799" height="334" alt="Screenshot 2026-02-02 205243" src="https://github.com/user-attachments/assets/36b35084-098b-4466-aa06-59d653b5486f" />
+<img width="1080" height="544" alt="image" src="https://github.com/user-attachments/assets/a0a689e7-f162-4b7c-ac8c-7c5cd24ddddf" />
 
 
 Server.py
-<img width="816" height="325" alt="Screenshot 2026-02-02 205402" src="https://github.com/user-attachments/assets/9cb066df-ceb0-4434-ac3a-711eea4e2d7b" />
+
+<img width="936" height="543" alt="image" src="https://github.com/user-attachments/assets/5d81c187-15a4-4697-a333-92b51b446756" />
 
 
 ## RESULT
